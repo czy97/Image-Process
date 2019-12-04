@@ -12,4 +12,4 @@ Different face images collected by people always vary in views and sizes. Before
 
 - face_process.py
 
-  Get the transformed and croped face.
+  Get the transformed and croped face. And there is an issue should be noted, that some of the opencv-python version don't have the estimateRigidTransform function. Here I use opencv-python==3.4.2.16
