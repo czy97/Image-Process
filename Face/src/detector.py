@@ -33,9 +33,9 @@ class FaceDetector:
             image: an instance of PIL.Image.
 
         Returns:
-            Two float numpy arrays of shapes [n_boxes, 4] and [n_boxes, 10],
+            Two float numpy arrays of shapes [n_boxes, 5] and [n_boxes, 10],
             bounding boxes and facial landmarks.
-            The bounding box sub_array consists of top_left_x, top_left_y, bottom_right_x, bottom_right_y
+            The bounding box sub_array consists of top_left_x, top_left_y, bottom_right_x, bottom_right_y, probability_being_a_face
             The landmarks sub_array consists of l_eye_x, r_eye_x, nose_x, l_mouth_x, r_mouth_x
                                                 l_eye_y, r_eye_y, nose_y, l_mouth_y, r_mouth_y
         """

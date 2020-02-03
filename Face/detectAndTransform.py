@@ -31,34 +31,28 @@ def get_bbox(image, facedetector):
     # the image is read by Image
     bounding_boxes, _ = facedetector.detect(image)
 
-    if(bounding_boxes.shape[0] != 1):
-        # more than one face is detected
-        return int(bounding_boxes.shape[0])
-    else:
-        return process_bbox(bounding_boxes[0])
+    if (isinstance(bounding_boxes, list)):
+        return None  # means no face is detected
+
+    return process_bbox(bounding_boxes[0]) # only return the first bounding box
 
 def get_landmarks(image, facedetector):
     # the image is read by Image
     _, landmarks = facedetector.detect(image)
 
     if(isinstance(landmarks,list)):
-        return 0 # means no face is detected
+        return None # means no face is detected
 
-    if (landmarks.shape[0] != 1):
-        # more than one face is detected
-        return int(landmarks.shape[0])
-    else:
-        return process_landmarks(landmarks[0])
+    return process_landmarks(landmarks[0]) # only return the first bounding box
 
 def get_bb_landmarks(image, facedetector):
     # the image is read by Image
     bounding_boxes, landmarks = facedetector.detect(image)
 
-    if (bounding_boxes.shape[0] != 1):
-        # more than one face is detected
-        return (int(bounding_boxes.shape[0]), int(bounding_boxes.shape[0]))
-    else:
-        return (process_bbox(bounding_boxes[0]),process_landmarks(landmarks[0]))
+    if (isinstance(bounding_boxes, list)):
+        return None  # means no face is detected
+
+    return (process_bbox(bounding_boxes[0]),process_landmarks(landmarks[0]))
 
 def landmarks_to_facetrans(array):
     # this function change the format to a 5x2 matrix which can be used in face transform
@@ -71,9 +65,7 @@ def get_transformedFace(img, facedetector):
 
     landmarks = get_landmarks(Image.fromarray(img,'RGB'),facedetector)
 
-    if(isinstance(landmarks,int)): # no faces or more than one faces are detected
-        # # Two faces is detected
-        # print(landmarks)
+    if landmarks is None: # no faces is detected
         return None
     else:
         landmarks = landmarks_to_facetrans(landmarks)
