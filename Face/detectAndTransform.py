@@ -31,7 +31,7 @@ def get_bbox(image, facedetector):
     # the image is read by Image
     bounding_boxes, _ = facedetector.detect(image)
 
-    if (isinstance(bounding_boxes, list)):
+    if (isinstance(bounding_boxes, list) or bounding_boxes.shape[0] == 0):
         return None  # means no face is detected
 
     return process_bbox(bounding_boxes[0]) # only return the first bounding box
@@ -40,7 +40,7 @@ def get_landmarks(image, facedetector):
     # the image is read by Image
     _, landmarks = facedetector.detect(image)
 
-    if(isinstance(landmarks,list)):
+    if(isinstance(landmarks,list) or landmarks.shape[0] == 0):
         return None # means no face is detected
 
     return process_landmarks(landmarks[0]) # only return the first bounding box
@@ -49,7 +49,7 @@ def get_bb_landmarks(image, facedetector):
     # the image is read by Image
     bounding_boxes, landmarks = facedetector.detect(image)
 
-    if (isinstance(bounding_boxes, list)):
+    if (isinstance(bounding_boxes, list) or bounding_boxes.shape[0] == 0):
         return None  # means no face is detected
 
     return (process_bbox(bounding_boxes[0]),process_landmarks(landmarks[0]))
@@ -66,7 +66,21 @@ def get_transformedFace(img, facedetector):
     landmarks = get_landmarks(Image.fromarray(img,'RGB'),facedetector)
 
     if landmarks is None: # no faces is detected
-        return None
+        # May be the color of the image is terrible
+        # I transform it to grey color
+        (r, g, b) = cv2.split(img)
+        tmp_image = img.copy()
+        tmp_image[:, :, 0] = g
+        tmp_image[:, :, 1] = g
+        tmp_image[:, :, 2] = g
+        facedetector.thresholds = [0.4, 0.5, 0.6]
+        landmarks = get_landmarks(Image.fromarray(tmp_image, 'RGB'), facedetector)
+        facedetector.thresholds = [0.6, 0.7, 0.8] # set back
+
+        if landmarks is None: return None
+        landmarks = landmarks_to_facetrans(landmarks)
+        return getFace_112x96(img, landmarks)
+
     else:
         landmarks = landmarks_to_facetrans(landmarks)
         return getFace_112x96(img,landmarks)
